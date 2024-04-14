@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import GameBoard from "./components/GameBoard";
 
 const LIST_CARDS = [
   {
@@ -9,7 +10,7 @@ const LIST_CARDS = [
   {
     id: 2,
     value: "B",
-    isFlipped: true,
+    isFlipped: false,
   },
   {
     id: 3,
@@ -19,7 +20,7 @@ const LIST_CARDS = [
   {
     id: 4,
     value: "D",
-    isFlipped: true,
+    isFlipped: false,
   },
   {
     id: 5,
@@ -43,72 +44,117 @@ const LIST_CARDS = [
   },
   {
     id: 9,
-    value: "I",
+    value: "A",
     isFlipped: false,
   },
   {
     id: 10,
-    value: "J",
+    value: "B",
     isFlipped: false,
   },
   {
     id: 11,
-    value: "K",
+    value: "C",
     isFlipped: false,
   },
   {
     id: 12,
-    value: "L",
+    value: "D",
     isFlipped: false,
   },
   {
     id: 13,
-    value: "M",
+    value: "E",
     isFlipped: false,
   },
   {
     id: 14,
-    value: "N",
+    value: "F",
     isFlipped: false,
   },
   {
     id: 15,
-    value: "O",
+    value: "G",
     isFlipped: false,
   },
   {
     id: 16,
-    value: "P",
+    value: "H",
     isFlipped: false,
   },
 ];
 
+const shuffle = (array) => {
+  return array.sort(() => Math.random() - 0.5)
+}
+
 function App() {
-  const [cards, setCards] = useState(LIST_CARDS);
+  const [isStart, setIsStart] = useState(false);
+  const [cards, setCards] = useState(shuffle(LIST_CARDS));
+  const [prevCard, setPrevCard] = useState(null);
+  const [currentCard, setCurrenCard] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [countMoves, setCountMoves] = useState(0)
+
+  useEffect(() => {
+    if (isStart) {
+      const timer = setTimeout(() => {
+        setTimeLeft(prevTimeLeft => prevTimeLeft - 1)
+      }, 1000)
+
+      if (timeLeft === 0 || cards.every(card => card.isFlipped)) {
+        setIsStart(false)
+        setCountMoves(0)
+        clearTimeout(timer)
+        setCards(shuffle(LIST_CARDS))
+      }
+
+      return () => clearTimeout(timer)
+    }
+  }, [isStart, timeLeft, cards])
+
+  useEffect(() => {
+    if (currentCard?.value !== prevCard?.value) {
+      setTimeout(() => {
+        setCards((prevCards) => {
+          const updateCards = prevCards.map((card) => {
+            if (card.id === currentCard.id || card.id === prevCard.id) return { ...card, isFlipped: false };
+            return card;
+          });
+
+          return updateCards;
+        });
+      }, 1000);
+    }
+  }, [currentCard]);
 
   const handleFlipCard = (cardId) => {
-    setCards(prevCards => prevCards.map(card => {
-      if (card.id === cardId) return {...card, isFlipped: !card.isFlipped}
-      return card
-    }))
-  }
+    setCountMoves(prevCountMoves => prevCountMoves + 1)
+
+    setCards((prevCards) => {
+      const flippedCards = prevCards.filter((card) => card.isFlipped);
+      const isEven = flippedCards.length % 2 === 0;
+
+      const isCardFlipped = prevCards.find((card) => card.id === cardId)?.isFlipped;
+      if (isCardFlipped) return prevCards;
+
+      return prevCards.map((card) => {
+        if (card.id === cardId) {
+          if (isEven) setPrevCard(card);
+          else setCurrenCard(card);
+
+          return { ...card, isFlipped: true };
+        }
+
+        return card;
+      });
+    });
+  };
 
   return (
     <div className="app">
-      <div className="game-board">
-        <p>time</p>
-        <p>move</p>
-        <div className="cards">
-          {cards.map((card) => (
-            <div key={card.id} className={`card ${card.isFlipped ? "flipped" : null}`} onClick={() => handleFlipCard(card.id)}>
-              <div className="card__content">
-                <p className="card__content-front">?</p>
-                <p className="card__content-back">{card.value}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      {!isStart && <button onClick={() => setIsStart(true)}>Start</button>}
+      {isStart && <GameBoard timeLeft={timeLeft} countMoves={countMoves} cards={cards} handleFlipCard={handleFlipCard} />}
     </div>
   );
 }
