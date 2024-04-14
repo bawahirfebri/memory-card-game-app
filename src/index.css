@@ -1,0 +1,46 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: 0;
+  border: 1px solid red;
+}
+
+.app {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+
+}
+
+.game-board {
+  width: fit-content;
+  margin: auto;
+  padding: 1rem;
+  background-color: red;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background-color: aqua;
+  gap: 1rem;
+  width: fit-content;
+}
+
+.card {
+  height: 4rem;
+  width: 4rem;
+  background-color: white;
+}
+
+.card__content-back {
+  display: none;
+}
+
+.flipped .card__content-front {
+  display: none;
+}
+
+.flipped .card__content-back {
+  display: block;
+}
