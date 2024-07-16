@@ -87,10 +87,11 @@ const LIST_CARDS = [
 const shuffle = (array) => {
   return array.sort(() => Math.random() - 0.5)
 }
+const shuffleCard = shuffle(LIST_CARDS)
 
 function App() {
-  const [isStart, setIsStart] = useState(false);
-  const [cards, setCards] = useState(shuffle(LIST_CARDS));
+  const [isStart, setIsStart] = useState(true);
+  const [cards, setCards] = useState(shuffleCard);
   const [prevCard, setPrevCard] = useState(null);
   const [currentCard, setCurrenCard] = useState(null);
   const [timeLeft, setTimeLeft] = useState(60);
@@ -153,7 +154,7 @@ function App() {
 
   return (
     <div className="app">
-      {!isStart && <button onClick={() => setIsStart(true)}>Start</button>}
+      {/* {!isStart && <button onClick={() => setIsStart(true)}>Start</button>} */}
       {isStart && <GameBoard timeLeft={timeLeft} countMoves={countMoves} cards={cards} handleFlipCard={handleFlipCard} />}
     </div>
   );
