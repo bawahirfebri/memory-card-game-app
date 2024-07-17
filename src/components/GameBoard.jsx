@@ -1,4 +1,4 @@
-function GameBoard({timeLeft, countMoves, cards, handleFlipCard}) {
+function GameBoard({timeLeft, countMoves, cards, handleFlipCard, setIsStart}) {
   return (
     <div className="game-board">
       <div className="game-navigation">
@@ -15,7 +15,7 @@ function GameBoard({timeLeft, countMoves, cards, handleFlipCard}) {
           </div>
         ))}
       </div>
-      <button className="start-btn">Stop</button>
+      <button className="start-btn" onClick={() => setIsStart(false)}>Stop</button>
     </div>
   );
 }

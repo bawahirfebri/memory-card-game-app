@@ -30,7 +30,7 @@
 .game-navigation {
   display: flex;
   justify-content: space-between;
-  font-size: 24px;
+  font-size: 18px;
 }
 
 .cards {
@@ -96,5 +96,6 @@ button {
   border: none;
   font-weight: 700;
   border-radius: .5rem;
+  cursor: pointer;
 }
 
